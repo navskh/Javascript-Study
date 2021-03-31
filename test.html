@@ -1,0 +1,19 @@
+<script type="text/javascript">
+let animal = {
+  name: "Animal"
+};
+
+  function Rabbit(name) {
+  this.name = name;
+}
+Rabbit.prototype = animal;
+
+let rabbit = new Rabbit("White Rabbit");
+
+let rabbit2 = new rabbit.constructor("Black Rabbit");
+
+// alert(rabbit.name);
+alert(rabbit.__proto__.name);
+alert(rabbit.constructor);
+alert(rabbit2.__proto__.name);
+</script>
