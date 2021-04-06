@@ -1,5 +1,55 @@
-<21.03.31>
 [객체 프로퍼티 설정]
+0. 프로퍼티 플래그와 설명자
+  프로퍼티는 키-값의 쌍으로만 다뤘으나 훨씬 유연한 자료구조이다.
+
+  - 프로퍼티 플래그
+  값 과 함께 가지는 flag 속성이 있다.
+  1) writable : true 이면 값을 수정 가능
+  2) enumerable : true 면 반복문으로 나열 가능
+  3) configurable : true 이면 프로퍼티 삭제 혹은 수정 가능
+
+  프로퍼티의 flag default 값은 모두 true, 언제든 수정이 가능하다.
+
+  * let descriptor = Object.getOwnPropertyDescriptor(obj, propertyName);
+  위와 같이 해당 프로퍼티의 정보를 얻을 수 있음
+  obj 객체명
+  propertyName 프로퍼티 명
+  
+  * descriptor를 찍을 땐 JSON.stringify 로 찍어준다.
+    /* property descriptor:
+    {
+      "value": "John",
+      "writable": true,
+      "enumerable": true,
+      "configurable": true
+    }
+    */
+  위와 같이 출력된다.
+
+  * Object.defineProperty(obj, propertyName, descriptor)
+  위를 사용하면 프로퍼티를 만들 수 있음
+  descriptor : 새롭게 만들 프로퍼티/플래그 정보
+  기존에 만드는 프로퍼티 생성법과 다르게 이 방법으로 만들면
+  플래그 정보가 모두 false로 만들어짐
+
+  Object.defineProperty(user, "name", {
+    writable: false
+  });
+  이렇게 만들면 writable 을 false로 만들 수 있다.
+
+  - enumerable 플래그
+  열거가 불가능한 메서드가 있다. 대표적으로 toString()
+  ex) 
+  let user = {
+    name: "John",
+    toString() {
+      return this.name;
+    }
+  };
+
+  열거가 불가능하다는 것은 for in 구문에 호출이 안된다는 것이다.
+  그런데 커스텀 toString을 추가하면 for in 구문에 toString이 나타난다.
+
 1. 플래그
   - configurable 플래그
   구성가능함을 나타내는 플래그
@@ -210,4 +260,41 @@
   근데 이 Object의 프로토타입이 있는데 거대한 객체이다.
 
   그래서 obj.toString() 을 호출할 때 Object.prototype 에서 가져온다.
+
+  - 네이티브 프로토타입 조작하기
+  String.prototype.show = function() {
+    alert(this);
+  };
+  
+  "BOOM!".show(); // BOOM!
+
+  String 타입의 프로토타입으로 접근 한 후 메서드를 추가하면 맘대로 쓸 수도 있다.
+  하지만 프로토타입은 전역으로 영향을 끼치기에 그렇게 좋은 방법은 아니다.
+
+  폴리필을 만들 때 쓰인다.
+
+  폴리필 : 자바스크립트 명세서에 있는 메서드와 동일한 기능을 하는 메서드 구현체. 
+  명세서에는 정의되어 있으나 특정 자바스크립트 엔진에서는 해당 기능이 구현되어있지 않을 때 사용
+
+  - 프로토타입에서 빌려오기
+  let obj = {
+    0: "Hello",
+    1: "world!",
+    length: 2,
+  };
+  
+  obj.join = Array.prototype.join;
+  
+  alert( obj.join(',') ); // Hello,world!
+
+  위의 경우 obj라는 객체에서 Array.prototype 안의 join 기능을 사용하기 위해 빌려온 것이다.
+
+5. 모던한 프로토타입 사용법
+  - Object.create(obj)
+  obj를 프로토 타입으로 설정
+  - Object.getPrototypeOf(obj)
+  obj의 프로토타입을 가져옴
+  - Object.setPrototypeOf(obj, {})
+  프로토 타입을 변경함.
+
   
